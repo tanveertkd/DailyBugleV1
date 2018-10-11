@@ -23,6 +23,9 @@ public class Settings extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settings_main);
 
+            Preference orderBy = findPreference(getString(R.string.order_key));
+            bindPreferenceSummaryToValue(orderBy);
+
             Preference minArticles = findPreference(getString(R.string.articles_key));
             bindPreferenceSummaryToValue(minArticles);
         }

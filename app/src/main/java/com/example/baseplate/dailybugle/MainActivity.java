@@ -76,6 +76,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<List<pojo>> onCreateLoader(int id, @Nullable Bundle args) {
 //        return new NewsLoaders(this, API_REQUEST_URL);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String orderBy = sharedPreferences.getString(
+                getString(R.string.order_key),
+                getString(R.string.order_default)
+        );
+
         String minArticlesToShow = sharedPreferences.getString(
                 getString(R.string.articles_key),
                 getString(R.string.default_articles)
@@ -83,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         Uri baseUri = Uri.parse(API_REQUEST_URL);
         Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendQueryParameter("order-by", orderBy);
         uriBuilder.appendQueryParameter("page-size", minArticlesToShow);
 
         return new NewsLoaders(this, uriBuilder.toString());

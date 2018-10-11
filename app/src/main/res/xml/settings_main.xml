@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/settings_title">
 
-    <!--<ListPreference-->
-        <!--android:defaultValue="@string/settings_order_by_default"-->
-        <!--android:entries="@array/settings_order_by_labels"-->
-        <!--android:entryValues="@array/settings_order_by_values"-->
-        <!--android:key="@string/settings_order_by_key"-->
-        <!--android:title="@string/settings_order_by_label" />-->
+    <ListPreference
+        android:defaultValue="@string/order_default"
+        android:entries="@array/settings_order_by_labels"
+        android:entryValues="@array/settings_order_by_key"
+        android:key="@string/order_key"
+        android:title="@string/order_title" />
 
     <EditTextPreference
         android:defaultValue="@string/default_articles"

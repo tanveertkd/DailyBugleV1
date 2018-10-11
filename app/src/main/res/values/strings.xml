@@ -6,8 +6,19 @@
     <string name="settings_menu_item">Settings</string>
     <string name="settings_title">Settings</string>
 
+    <!--For the article limit-->
     <string name="default_articles">10</string>
     <string name="articles_key">article_limit</string>
     <string name="articles_label">Number of articles to load</string>
 
+    <!--For the order type-->
+    <string name="order_title">Order By</string>
+    <string name="order_key" translatable="false">order-by</string>
+    <string name="order_default" translatable="false">newest</string>
+
+    <string name="sort_new">Latest</string>
+    <string name="sort_new_key" translatable="false">newest</string>
+
+    <string name="sort_old">Older</string>
+    <string name="sort_older_key" translatable="false">oldest</string>
 </resources>
