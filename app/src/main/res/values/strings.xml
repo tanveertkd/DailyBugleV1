@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Daily Bugle</string>
+    <string name="no_conn">No Internet Connection</string>
+    <string name="no_news">Well, its seems like there\'s no news at me moment. </string>
+
+    <string name="settings_menu_item">Settings</string>
+    <string name="settings_title">Settings</string>
+
+    <string name="default_articles">10</string>
+    <string name="articles_key">article_limit</string>
+    <string name="articles_label">Number of articles to load</string>
+
+</resources>
