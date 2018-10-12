@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private NewsAdapter mAdapter;
     private TextView mEmptyStateTextView;
+    SwipeRefreshLayout mSwipeRefresh;
+    private ArrayList<pojo> newsArray= new ArrayList<>();
+    LoaderManager loaderManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         ListView newsItemListView = (ListView) findViewById(R.id.list);
-
         mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
         newsItemListView.setEmptyView(mEmptyStateTextView);
 
@@ -57,7 +60,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(webIntent);
             }
         });
-
+        mSwipeRefresh = findViewById(R.id.swipe);
+        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                newsArray.clear();
+                mAdapter.notifyDataSetChanged();
+                //loaderManager.restartLoader(LOADER_ID, null, MainActivity.this);
+                getSupportLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
+                mSwipeRefresh.setRefreshing(true);
+            }
+        });
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -97,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(@NonNull Loader<List<pojo>> loader, List<pojo> data) {
         mEmptyStateTextView.setText(getText(R.string.no_news));
-
+        mSwipeRefresh.setRefreshing(false);
         ProgressBar loadingView = findViewById(R.id.loading_indicator);
         loadingView.setVisibility(View.GONE);
 
