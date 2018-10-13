@@ -14,6 +14,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +27,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<pojo>>{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<pojo>>,SharedPreferences.OnSharedPreferenceChangeListener{
 
     public static final String LOG_TAG = MainActivity.class.getName();
-    //public static final String API_REQUEST_URL = "https://content.guardianapis.com/search?&show-tags=contributor&show-fields=headline&api-key=150b0c4d-fcad-470a-a579-0424d80c045a";
     public static final String API_REQUEST_URL = "https://content.guardianapis.com/search?api-key=150b0c4d-fcad-470a-a579-0424d80c045a&show-tags=contributor&show-fields=headline";
     public static final int LOADER_ID = 1;
 
@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private TextView mEmptyStateTextView;
     SwipeRefreshLayout mSwipeRefresh;
     private ArrayList<pojo> newsArray= new ArrayList<>();
-    LoaderManager loaderManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mAdapter = new NewsAdapter(this, new ArrayList<pojo>());
         newsItemListView.setAdapter(mAdapter);
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(this);
+
         newsItemListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -60,17 +62,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(webIntent);
             }
         });
+
         mSwipeRefresh = findViewById(R.id.swipe);
         mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 newsArray.clear();
                 mAdapter.notifyDataSetChanged();
-                //loaderManager.restartLoader(LOADER_ID, null, MainActivity.this);
                 getSupportLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
                 mSwipeRefresh.setRefreshing(true);
             }
         });
+
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -84,10 +87,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        Log.e(LOG_TAG, "OnSharedPrefChanged called");
+        if(s.equals(getString(R.string.order_key))||s.equals(getString(R.string.articles_key))){
+            mAdapter.clear();
+            mEmptyStateTextView.setVisibility(View.GONE);
+            View progressBar = findViewById(R.id.loading_indicator);
+            progressBar.setVisibility(View.VISIBLE);
+            getSupportLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
+        }
+    }
+
     @NonNull
     @Override
     public Loader<List<pojo>> onCreateLoader(int id, @Nullable Bundle args) {
-//        return new NewsLoaders(this, API_REQUEST_URL);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String orderBy = sharedPreferences.getString(
                 getString(R.string.order_key),
